@@ -8,8 +8,6 @@ warnings.filterwarnings("ignore")
 
 
 def test_01():
-
-    # Test if the homework script runs without errors
     try:
         subprocess.run(
             [
@@ -22,8 +20,12 @@ def test_01():
                 "n_neighbors=5",
             ],
             check=True,
+            capture_output=True,
+            text=True,
         )
     except subprocess.CalledProcessError as e:
+        print("STDOUT:", e.stdout)
+        print("STDERR:", e.stderr)
         raise Exception(f"Error running the homework script: {e}")
 
     # Ensure the mlruns directory exists

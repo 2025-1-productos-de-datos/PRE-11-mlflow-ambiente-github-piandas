@@ -1,5 +1,6 @@
-name: CI
+name: CI - Test Homework with Docker
 
+# Se dispara cada vez que haces push o pull_request sobre main (puedes cambiar la rama si usas otra)
 on:
   push:
     branches: [ main ]
@@ -10,23 +11,28 @@ jobs:
   test-homework:
     runs-on: ubuntu-latest
 
-    # Fuerza a Docker a usar la versión AMD64 de las imágenes
+    # ======= ESTA SECCIÓN ES LA CLAVE =======
+    # Fuerza a Docker a bajar/ejecutar la variante amd64 de las imágenes multiarquitectura
     env:
       DOCKER_DEFAULT_PLATFORM: linux/amd64
 
     steps:
+      # 1) Clonamos tu repositorio para trabajar sobre su contenido
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # 2) Preparamos Python 3.10 (elige la versión que necesites)
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
+      # 3) Instalamos MLflow y pytest para correr los tests
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install mlflow pytest
 
-      - name: Run tests (con Docker)
+      # 4) Ejecutamos pytest (que a su vez hace "mlflow run …" dentro de tu test)
+      - name: Run tests
         run: pytest -q
